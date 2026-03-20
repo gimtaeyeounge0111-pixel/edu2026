@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>분배적 정의: 롤스 vs 노직</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=Inter:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        // Tailwind dark mode configuration
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        :root {
+            --primary-rawls: #2563eb;
+            --primary-nozick: #ea580c;
+        }
+        
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .serif-title {
+            font-family: 'Noto Serif KR', serif;
+        }
+
+        .glass-nav {
+            background: rgba(250, 250, 249, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .dark .glass-nav {
+            background: rgba(28, 25, 23, 0.8);
+            border-color: #44403c;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e7e5e4, transparent);
+        }
+        .dark .section-divider {
+            background: linear-gradient(to right, transparent, #44403c, transparent);
+        }
+
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+        }
+
+        .veil-box {
+            background: #1c1917;
+            transition: background 0.6s ease;
+        }
+
+        .veil-box.unveiled {
+            background: #f5f5f4;
+        }
+        .dark .veil-box.unveiled {
+            background: #292524;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f5f5f4;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1c1917;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6d3d1;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #44403c;
+        }
+
+        /* Theme Toggle Switch */
+        .theme-toggle-btn {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            border-radius: 999px;
+            background-color: #e7e5e4;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+        }
+        .dark .theme-toggle-btn {
+            background-color: #44403c;
+        }
+        .theme-toggle-thumb {
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .dark .theme-toggle-thumb {
+            transform: translateX(24px);
+            background-color: #1c1917;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-[100] glass-nav border-b border-stone-200 dark:border-stone-800">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                    <span class="text-white dark:text-black text-xs font-bold">E</span>
+                </div>
+                <span class="font-extrabold tracking-tighter text-xl">JUSTICE LAB</span>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-10 text-sm font-semibold tracking-tight text-stone-500 dark:text-stone-400">
+                <a href="#intro" class="hover:text-black dark:hover:text-white transition">Introduction</a>
+                <a href="#rawls" class="hover:text-primary-rawls transition">Rawls</a>
+                <a href="#nozick" class="hover:text-primary-nozick transition">Nozick</a>
+                <a href="./01/index.html" class="hover:text-black dark:hover:text-white transition">Summary</a>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <!-- Theme Toggle -->
+                <div class="theme-toggle-btn" onclick="toggleTheme()">
+                    <div class="theme-toggle-thumb">
+                        <i id="theme-icon" class="fa-solid fa-sun text-[10px] text-orange-500"></i>
+                    </div>
+                </div>
+                <button class="bg-black dark:bg-stone-100 dark:text-black text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-stone-800 dark:hover:bg-white transition">자료 받기</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="intro" class="pt-40 pb-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
+                <div class="max-w-2xl">
+                    <p class="text-stone-500 dark:text-stone-400 font-semibold mb-4 tracking-widest uppercase text-xs">고등학교 1학년 생활과 윤리</p>
+                    <h1 class="serif-title text-5xl md:text-7xl leading-[1.1] mb-8">당신이 원하는<br><span class="text-stone-400 dark:text-stone-600">정의로운 사회</span>는<br>무엇인가요?</h1>
+                </div>
+                <div class="max-w-sm text-stone-500 dark:text-stone-400 pb-2">
+                    <p class="leading-relaxed border-l-2 border-stone-300 dark:border-stone-700 pl-6">분배의 기준은 무엇이어야 할까요? 필요인가요, 능력인가요, 아니면 정당한 소유권인가요? 두 거장의 목소리를 들어봅니다.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[400px]">
+                <div class="bg-stone-200 dark:bg-stone-800 rounded-3xl overflow-hidden relative group">
+                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80')] bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-700"></div>
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all"></div>
+                </div>
+                <div class="bg-stone-900 dark:bg-stone-800 rounded-3xl p-10 flex flex-col justify-between text-white overflow-hidden relative">
+                    <div class="relative z-10">
+                        <h3 class="text-3xl font-bold mb-4 serif-title italic text-stone-300 dark:text-stone-100">"Justice is the first virtue of social institutions."</h3>
+                        <p class="opacity-60 text-sm">- John Rawls</p>
+                    </div>
+                    <a href="#veil-section" class="relative z-10 self-start bg-white text-black px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 group">
+                        시작하기 <i class="fa-solid fa-arrow-down group-hover:translate-y-1 transition"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Veil of Ignorance Interactive -->
+    <section id="veil-section" class="py-32 bg-stone-100 dark:bg-stone-900/50 px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="serif-title text-4xl mb-6">시작 전, 가면을 써봅시다</h2>
+                <p class="text-stone-500 dark:text-stone-400 max-w-xl mx-auto">사회의 규칙을 정하기 전, 내가 누구로 태어날지 모르는 '무지의 베일' 상태로 들어갑니다.</p>
+            </div>
+
+            <div id="veil-card" class="veil-box rounded-[40px] h-[500px] flex flex-col items-center justify-center p-12 cursor-pointer shadow-2xl relative overflow-hidden group">
+                <div id="veil-instruction" class="text-center transition-all duration-500">
+                    <div class="w-20 h-20 border border-white/20 rounded-full flex items-center justify-center mb-8 mx-auto group-hover:scale-110 transition">
+                        <i class="fa-solid fa-masks-theater text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-white text-2xl font-light tracking-widest mb-2">원초적 입장 (Original Position)</h3>
+                    <p class="text-stone-500 text-sm uppercase font-bold tracking-tighter">Click to unveil your identity</p>
+                </div>
+
+                <div id="identity-content" class="hidden text-center scale-95 opacity-0 transition-all duration-700">
+                    <span class="text-xs font-bold uppercase tracking-widest text-stone-400 dark:text-stone-500 mb-6 block">당신에게 부여된 운명</span>
+                    <h4 id="target-identity" class="serif-title text-4xl md:text-5xl text-stone-900 dark:text-stone-200 leading-tight mb-10"></h4>
+                    <div class="flex justify-center gap-4">
+                        <button onclick="resetVeil(event)" class="text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 text-sm font-bold transition">다시 해보기</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-8 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200 dark:border-stone-700">
+                    <p class="text-stone-400 text-xs font-bold mb-4 uppercase">Concept 01</p>
+                    <h5 class="font-bold mb-2">무지의 베일</h5>
+                    <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">자신의 사회적 지위, 지능, 재능을 전혀 모르는 상태를 말합니다.</p>
+                </div>
+                <div class="p-8 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200 dark:border-stone-700">
+                    <p class="text-stone-400 text-xs font-bold mb-4 uppercase">Concept 02</p>
+                    <h5 class="font-bold mb-2">합리적 선택</h5>
+                    <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">자신이 가장 불리한 처지에 놓일 경우를 대비해 규칙을 만듭니다.</p>
+                </div>
+                <div class="p-8 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200 dark:border-stone-700">
+                    <p class="text-stone-400 text-xs font-bold mb-4 uppercase">Concept 03</p>
+                    <h5 class="font-bold mb-2">절차적 정의</h5>
+                    <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">공정한 절차를 거쳤다면 그 결과도 정의롭다고 보는 관점입니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rawls Section -->
+    <section id="rawls" class="py-32 px-6 overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row gap-20 items-start">
+                <div class="md:w-5/12 sticky top-32">
+                    <div class="inline-block bg-blue-600 text-white text-[10px] font-black px-3 py-1 rounded-sm mb-6 uppercase tracking-widest">The Liberal Egalitarian</div>
+                    <h2 class="serif-title text-6xl mb-8 leading-none">존 롤스</h2>
+                    <p class="text-stone-500 dark:text-stone-400 text-lg leading-relaxed mb-10">
+                        "사회의 최소 수혜자에게 최대의 이익이 돌아가야 한다." 롤스는 불평등이 모든 사람에게 이득이 될 때만 허용된다고 보았습니다.
+                    </p>
+                    <div class="space-y-6">
+                        <div class="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border-l-4 border-blue-600">
+                            <h4 class="font-bold text-blue-900 dark:text-blue-300 mb-1">제1원칙: 평등한 자유</h4>
+                            <p class="text-blue-700/70 dark:text-blue-400/70 text-sm">신체의 자유, 언론의 자유 등 기본권은 평등해야 함.</p>
+                        </div>
+                        <div class="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border-l-4 border-blue-600">
+                            <h4 class="font-bold text-blue-900 dark:text-blue-300 mb-1">제2원칙: 차등의 원칙</h4>
+                            <p class="text-blue-700/70 dark:text-blue-400/70 text-sm">사회적 약자(최소 수혜자)에게 최대의 혜택을 제공함.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-7/12 grid grid-cols-1 gap-6">
+                    <div class="bg-stone-200 dark:bg-stone-800 aspect-[4/3] rounded-[40px] overflow-hidden">
+                        <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1521791136064-7986c295944c?auto=format&fit=crop&q=80')] bg-cover bg-center mix-blend-multiply opacity-80 dark:opacity-40"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-stone-900 p-8 rounded-3xl border border-stone-200 dark:border-stone-800 hover-lift">
+                            <i class="fa-solid fa-handshake-angle text-blue-600 text-2xl mb-6"></i>
+                            <h5 class="font-bold mb-2">공정으로서의 정의</h5>
+                            <p class="text-stone-400 text-xs leading-relaxed">협동의 결과물을 나누는 절차가 공정해야 함</p>
+                        </div>
+                        <div class="bg-white dark:bg-stone-900 p-8 rounded-3xl border border-stone-200 dark:border-stone-800 hover-lift">
+                            <i class="fa-solid fa-chart-line text-blue-600 text-2xl mb-6"></i>
+                            <h5 class="font-bold mb-2">복지 국가 지향</h5>
+                            <p class="text-stone-400 text-xs leading-relaxed">국가의 적극적인 재분배와 개입을 옹호</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Nozick Section -->
+    <section id="nozick" class="py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row-reverse gap-20 items-start">
+                <div class="md:w-5/12 sticky top-32">
+                    <div class="inline-block bg-orange-600 text-white text-[10px] font-black px-3 py-1 rounded-sm mb-6 uppercase tracking-widest">The Libertarian</div>
+                    <h2 class="serif-title text-6xl mb-8 leading-none">로버트 노직</h2>
+                    <p class="text-stone-500 dark:text-stone-400 text-lg leading-relaxed mb-10">
+                        "개인의 자유는 절대적이다." 노직은 정당한 소유권이 있다면 국가의 강제적 재분배는 부당하다고 주장했습니다.
+                    </p>
+                    <div class="space-y-6">
+                        <div class="p-6 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border-l-4 border-orange-600">
+                            <h4 class="font-bold text-orange-900 dark:text-orange-300 mb-1">소유 권리론</h4>
+                            <p class="text-orange-700/70 dark:text-orange-400/70 text-sm">취득, 이전, 교정의 과정이 정당하다면 결과도 정의로움.</p>
+                        </div>
+                        <div class="p-6 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border-l-4 border-orange-600">
+                            <h4 class="font-bold text-orange-900 dark:text-orange-300 mb-1">최소 국가론</h4>
+                            <p class="text-orange-700/70 dark:text-orange-400/70 text-sm">국가는 오직 안전과 계약 이행만을 담당해야 함.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-7/12 grid grid-cols-1 gap-6">
+                    <div class="bg-stone-200 dark:bg-stone-800 aspect-[4/3] rounded-[40px] overflow-hidden">
+                        <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&q=80')] bg-cover bg-center mix-blend-multiply opacity-80 dark:opacity-40"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-stone-900 p-8 rounded-3xl border border-stone-200 dark:border-stone-800 hover-lift">
+                            <i class="fa-solid fa-lock text-orange-600 text-2xl mb-6"></i>
+                            <h5 class="font-bold mb-2">자기 소유권</h5>
+                            <p class="text-stone-400 text-xs leading-relaxed">내 몸과 재능, 그리고 노력의 결과는 오직 내 것</p>
+                        </div>
+                        <div class="bg-white dark:bg-stone-900 p-8 rounded-3xl border border-stone-200 dark:border-stone-800 hover-lift">
+                            <i class="fa-solid fa-ban text-orange-600 text-2xl mb-6"></i>
+                            <h5 class="font-bold mb-2">강제 노동 반대</h5>
+                            <p class="text-stone-400 text-xs leading-relaxed">복지를 위한 과세는 개인에 대한 침해</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visual Comparison -->
+    <section id="comparison" class="py-32 bg-stone-900 dark:bg-stone-950 text-white px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-20 text-center md:text-left">
+                <h2 class="serif-title text-5xl mb-4">Master Comparison</h2>
+                <p class="text-stone-500 font-bold uppercase tracking-widest text-xs">한눈에 정리하는 정의관</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div class="border-t border-stone-700 pt-8">
+                    <div class="flex items-center gap-4 mb-8">
+                        <span class="text-4xl serif-title opacity-20 italic">01</span>
+                        <h4 class="text-xl font-bold uppercase tracking-tight">핵심 키워드</h4>
+                    </div>
+                    <div class="space-y-12">
+                        <div class="flex justify-between items-end border-b border-stone-800 pb-4">
+                            <span class="text-blue-400 font-bold">Rawls</span>
+                            <span class="text-sm">공정성, 절차, 복지</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-stone-800 pb-4">
+                            <span class="text-orange-400 font-bold">Nozick</span>
+                            <span class="text-sm">권리, 역사, 자유</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-stone-700 pt-8">
+                    <div class="flex items-center gap-4 mb-8">
+                        <span class="text-4xl serif-title opacity-20 italic">02</span>
+                        <h4 class="text-xl font-bold uppercase tracking-tight">국가의 성격</h4>
+                    </div>
+                    <div class="space-y-12">
+                        <div class="flex justify-between items-end border-b border-stone-800 pb-4">
+                            <span class="text-blue-400 font-bold">Rawls</span>
+                            <span class="text-sm">적극적 재분배 국가</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-stone-800 pb-4">
+                            <span class="text-orange-400 font-bold">Nozick</span>
+                            <span class="text-sm">최소 국가 (야경 국가)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz/Reflection -->
+    <section class="py-32 px-6">
+        <div class="max-w-3xl mx-auto text-center">
+            <span class="text-stone-400 text-xs font-bold tracking-widest uppercase mb-8 block">Reflection Time</span>
+            <h2 class="serif-title text-4xl mb-12">누구의 손을 들어주시겠습니까?</h2>
+            
+            <div class="flex flex-col md:flex-row gap-6 mb-16">
+                <button onclick="discuss('rawls')" class="flex-1 group bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-8 rounded-3xl hover:border-blue-600 transition-all text-left">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-check text-blue-600 group-hover:text-white"></i>
+                    </div>
+                    <h4 class="font-extrabold mb-2">롤스</h4>
+                    <p class="text-stone-400 text-xs">사회적 안전망과 공정한 기회가 우선이다</p>
+                </button>
+                <button onclick="discuss('nozick')" class="flex-1 group bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-8 rounded-3xl hover:border-orange-600 transition-all text-left">
+                    <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-check text-orange-600 group-hover:text-white"></i>
+                    </div>
+                    <h4 class="font-extrabold mb-2">노직</h4>
+                    <p class="text-stone-400 text-xs">개인의 소유권과 자유가 절대적 가치다</p>
+                </button>
+            </div>
+
+            <div id="discussion-box" class="hidden">
+                <div class="bg-stone-50 dark:bg-stone-900 p-10 rounded-[40px] border border-stone-200 dark:border-stone-800">
+                    <h5 id="discussion-title" class="serif-title text-2xl mb-4"></h5>
+                    <p id="discussion-text" class="text-stone-500 dark:text-stone-400 leading-relaxed italic"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 bg-stone-100 dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 text-center transition-colors">
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="text-stone-400 text-xs font-bold tracking-widest uppercase mb-4">Ethics Lab Online</p>
+            <p class="text-stone-500 text-sm italic serif-title">"The unexamined life is not worth living."</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Logic
+        function setTheme(theme) {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                icon.className = 'fa-solid fa-moon text-[10px] text-blue-400';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                icon.className = 'fa-solid fa-sun text-[10px] text-orange-500';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            setTheme(isDark ? 'light' : 'dark');
+        }
+
+        // Initialize theme from local storage
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setTheme('dark');
+            }
+        }
+
+        // Veil Simulation
+        const identities = [
+            "억만장자의 외동딸로 태어난 천재 예술가",
+            "심각한 지적 장애를 가졌으며 부모가 없는 고아",
+            "운동 능력이 뛰어난 평범한 가정의 학생",
+            "가난한 농촌에서 태어난 선천적 질환을 가진 아이",
+            "풍부한 상속 재산을 가진 건강한 자산가"
+        ];
+
+        const veilCard = document.getElementById('veil-card');
+        const veilInstruction = document.getElementById('veil-instruction');
+        const identityContent = document.getElementById('identity-content');
+        const targetIdentity = document.getElementById('target-identity');
+
+        veilCard.addEventListener('click', function() {
+            if (!this.classList.contains('unveiled')) {
+                const randomId = identities[Math.floor(Math.random() * identities.length)];
+                targetIdentity.innerText = randomId;
+                
+                this.classList.add('unveiled');
+                veilInstruction.classList.add('opacity-0', 'scale-90');
+                
+                setTimeout(() => {
+                    veilInstruction.classList.add('hidden');
+                    identityContent.classList.remove('hidden');
+                    setTimeout(() => {
+                        identityContent.classList.remove('opacity-0', 'scale-95');
+                        identityContent.classList.add('opacity-100', 'scale-100');
+                    }, 50);
+                }, 400);
+            }
+        });
+
+        function resetVeil(e) {
+            e.stopPropagation();
+            veilCard.classList.remove('unveiled');
+            identityContent.classList.add('opacity-0', 'scale-95');
+            
+            setTimeout(() => {
+                identityContent.classList.add('hidden');
+                veilInstruction.classList.remove('hidden');
+                setTimeout(() => {
+                    veilInstruction.classList.remove('opacity-0', 'scale-90');
+                }, 50);
+            }, 400);
+        }
+
+        // Discussion Logic
+        function discuss(philosopher) {
+            const box = document.getElementById('discussion-box');
+            const title = document.getElementById('discussion-title');
+            const text = document.getElementById('discussion-text');
+            
+            box.classList.remove('hidden');
+            if(philosopher === 'rawls') {
+                title.innerText = "롤스의 입장에서는...";
+                text.innerText = "\"이 아이가 최소 수혜자로 태어났을 때, 인간다운 삶을 살 수 있는 최소한의 조건이 갖춰진 사회인가? 그렇지 않다면 그 사회는 정의롭지 않습니다.\"";
+            } else {
+                title.innerText = "노직의 입장에서는...";
+                text.innerText = "\"누군가의 재능이나 운명이 불평등하다고 해서, 타인의 정당한 소유물을 빼앗는 것은 또 다른 불의(Injustice)일 뿐입니다.\"";
+            }
+            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+</body>
+</html>
